@@ -55,6 +55,13 @@ header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px;
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
   padding:15px 16px 14px;display:flex;flex-direction:column;min-height:158px}
 .card.tall{min-height:212px}
+.card.att{border-left:3px solid var(--bad)}
+.card.okr{border-left:3px solid var(--good)}
+.card.flr{border-left:3px solid var(--flat)}
+.vrow{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.chip{font-family:var(--mono);font-size:13px;font-weight:700;
+  letter-spacing:.04em;padding:2px 7px;border-radius:4px;border:1px solid currentColor;
+  white-space:nowrap}
 .t{font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:.045em;
   color:var(--ink2);display:flex;align-items:baseline;gap:7px}
 .t .win{font-weight:700;font-size:13px;color:var(--mute);letter-spacing:.03em}
@@ -104,6 +111,10 @@ footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);
 footer b{color:var(--ink2)}
 .warn{color:var(--flat);font-weight:700}
 svg{display:block;width:100%;height:auto}
+h2{text-wrap:balance}
+.v,.d,.kv,.plab,table.bars{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+.tblwrap{overflow-x:auto}
 .sparkbox svg{height:54px}
 .colbox svg{height:44px}
 </style>
@@ -279,6 +290,13 @@ function title(c, text, win, tip){
     (tip ? " <span class='info' title=\"" + esc(tip) + "\">i</span>" : "");
   c.appendChild(t);
 }
+/* value plus its state chip on one row, so titles stay single line */
+function bigval(c, text, cls, chip, chipCls){
+  const r = $("div"); r.className = "vrow";
+  r.innerHTML = "<span class='v " + (cls || "") + "'>" + esc(text) + "</span>" +
+    (chip ? "<span class='chip " + (chipCls || "nu") + "'>" + esc(chip) + "</span>" : "");
+  c.appendChild(r); return r;
+}
 function note(c, html, strong){
   const n = $("div"); n.className = "n" + (strong ? " strong" : ""); n.innerHTML = html;
   c.appendChild(n);
@@ -344,7 +362,7 @@ app.appendChild(sec("Revenue"));
 
   const c = card("c8","tall");
   title(c, "Community MRR", "USD · month to date", D.mrr.tip);
-  const v = $("div"); v.className = "v hero"; v.textContent = money(D.mrr.value); c.appendChild(v);
+  bigval(c, money(D.mrr.value), "hero");
   const p = $("div"); p.className = "prog";
   const share = (D.mrr.value / D.mrr.target) * 100;
   p.innerHTML = "<div class='track'><div class='fill' style='width:" + share.toFixed(1) + "%'></div></div>" +
@@ -359,13 +377,14 @@ app.appendChild(sec("Revenue"));
   note(c, D.mrr.pop);
   g.appendChild(c);
 
-  const n = card("c4","tall");
   const flat = Math.abs(D.net.value) <= D.net.band;
-  title(n, "Net this month", "vs last month close", D.net.tip);
-  const nv = $("div"); nv.className = "v " + (flat ? "fl" : (D.net.value > 0 ? "up" : "dn"));
-  nv.textContent = (D.net.value > 0 ? "+" : "") + money2(D.net.value); n.appendChild(nv);
+  const n = card("c4","tall" + (flat ? " flr" : ""));
+  title(n, "Net this month", "vs last month", D.net.tip);
+  bigval(n, (D.net.value > 0 ? "+" : "") + money2(D.net.value),
+         flat ? "fl" : (D.net.value > 0 ? "up" : "dn"),
+         flat ? "FLAT" : "MOVING", flat ? "fl" : "up");
   const nd = $("div"); nd.className = "d " + (flat ? "fl" : "nu");
-  nd.textContent = flat ? "FLAT · inside ±" + money(D.net.band) : "moving";
+  nd.textContent = flat ? "inside ±" + money(D.net.band) : "outside the flat band";
   n.appendChild(nd);
   const nb = $("div"); nb.className = "colbox"; nb.style.marginTop = "13px";
   nb.innerHTML = "<div class='t' style='font-size:13px;letter-spacing:.03em'>Net added per month " +
@@ -389,9 +408,9 @@ app.appendChild(splitSec("Acquisition","coming in","Retention","going out"));
 
   const a = card("c3");
   title(a, "New members", "30 days", D.newmem.tip);
-  const av = $("div"); av.className = "v"; av.textContent = num(D.newmem.v30); a.appendChild(av);
+  bigval(a, num(D.newmem.v30), "", "NOT COMPARABLE", "nu");
   const ad = $("div"); ad.className = "d nu";
-  ad.textContent = "prior 30d " + num(D.newmem.vprior) + " · not comparable";
+  ad.textContent = "prior 30d " + num(D.newmem.vprior);
   a.appendChild(ad);
   const aw = $("div"); aw.className = "colbox"; aw.style.marginTop = "9px";
   aw.innerHTML = cols(D.newmem.weeks) +
@@ -405,7 +424,7 @@ app.appendChild(splitSec("Acquisition","coming in","Retention","going out"));
   const y = card("c3");
   title(y, "Of which YouTube", "30 days", D.yt.tip);
   const ys = (D.yt.buyers / D.yt.total) * 100;
-  const yv = $("div"); yv.className = "v"; yv.textContent = num(D.yt.buyers); y.appendChild(yv);
+  bigval(y, num(D.yt.buyers), "");
   const yd = $("div"); yd.className = "d nu";
   yd.textContent = "at least " + pct(ys,0) + " of " + D.yt.total + " buyers";
   y.appendChild(yd);
@@ -413,10 +432,11 @@ app.appendChild(splitSec("Acquisition","coming in","Retention","going out"));
           num(D.yt.visitors120) + " tagged YouTube arrivals in 120 days.");
   g.appendChild(y);
 
-  const ch = card("c3");
+  const over = D.churn.rate - D.churn.target;
+  const ch = card("c3", over > 0 ? "att" : "okr");
   title(ch, "Churn", "30 days · at period end", D.churn.tip);
-  const cv = $("div"); cv.className = "v " + (D.churn.rate > D.churn.target ? "dn" : "up");
-  cv.textContent = pct(D.churn.rate,2); ch.appendChild(cv);
+  bigval(ch, pct(D.churn.rate,2), over > 0 ? "dn" : "up",
+         (over > 0 ? "+" : "") + over.toFixed(1) + " PTS", over > 0 ? "dn" : "up");
   const cr = $("div"); cr.className = "row2"; cr.style.marginTop = "10px";
   cr.innerHTML = "<span class='kv'><b>" + pct(D.churn.target) + "</b>target</span>" +
     "<span class='kv'><b>" + pct(D.churn.prevRate,1) + "</b>prior 30d</span>" +
@@ -431,9 +451,9 @@ app.appendChild(splitSec("Acquisition","coming in","Retention","going out"));
     " ✓</span> flow closes");
   g.appendChild(ch);
 
-  const pg = card("c3");
+  const pg = card("c3","att");
   title(pg, "Leaving now", "reachable", D.pending.tip);
-  const pv = $("div"); pv.className = "v dn"; pv.textContent = num(D.pending.subs); pg.appendChild(pv);
+  bigval(pg, num(D.pending.subs), "dn", "ACTION", "dn");
   const pr = $("div"); pr.className = "row2"; pr.style.marginTop = "8px";
   pr.innerHTML = "<span class='kv'><b>" + money(D.pending.mrr) + "</b>MRR at risk</span>" +
                  "<span class='kv'><b>" + D.pending.gone7d + "</b>ended in 7d</span>";
@@ -478,18 +498,18 @@ app.appendChild(splitSec("Same day money","fix this morning","Audience","reach")
 {
   const g = grid();
 
-  const f = card("c3");
+  const f = card("c3", D.failed.customers > 0 ? "att" : "okr");
   title(f, "Failed payments", "7 days", D.failed.tip);
-  const fv = $("div"); fv.className = "v dn"; fv.textContent = num(D.failed.customers); f.appendChild(fv);
+  bigval(f, num(D.failed.customers), "dn", "ACTION", "dn");
   const fd = $("div"); fd.className = "d dn"; fd.textContent = money2(D.failed.amount) + " outstanding";
   f.appendChild(fd);
   note(f, "customers, not attempts. " + D.failed.attempts + " attempts, " +
     D.failed.retried + " retried, one card tried " + D.failed.maxAttempts + " times.", true);
   g.appendChild(f);
 
-  const dp = card("c3");
+  const dp = card("c3", D.dupes.count === 0 ? "okr" : "att");
   title(dp, "Duplicate charges", "7 days", D.dupes.tip);
-  const dv = $("div"); dv.className = "v up"; dv.textContent = num(D.dupes.count); dp.appendChild(dv);
+  bigval(dp, num(D.dupes.count), "up", "CLEAR", "up");
   const dd = $("div"); dd.className = "d nu";
   dd.textContent = num(D.dupes.scanned) + " charges checked";
   dp.appendChild(dd);
@@ -497,9 +517,9 @@ app.appendChild(splitSec("Same day money","fix this morning","Audience","reach")
     money(D.dupes.gross) + " of successful charges.");
   g.appendChild(dp);
 
-  const e = card("c3");
+  const e = card("c3", D.email.net < 0 ? "att" : "okr");
   title(e, "Email list", "Kit · 30 days", D.email.tip);
-  const ev = $("div"); ev.className = "v"; ev.textContent = num(D.email.subs); e.appendChild(ev);
+  bigval(e, num(D.email.subs), "", "SHRINKING", "dn");
   const ed = $("div"); ed.className = "d dn"; ed.textContent = num(D.email.net) + " net";
   e.appendChild(ed);
   note(e, "<span class='kv'>" + num(D.email.gained) + " in · " + num(D.email.lost) +
