@@ -207,3 +207,16 @@ needs them. Recorded so nobody re-probes.
 
 Make's Apify scenarios are a second possible route to YouTube data if the
 Composio approval is declined.
+
+---
+
+## Published page and refresh
+
+- Artifact: https://claude.ai/code/artifact/b9978f14-d36f-4682-b38a-c4e76b78a9c2
+- Title `Wayflyer Morning Brief`, favicon 📈. Both must stay stable across
+  republishes: that is how people find the page again.
+- Refresh skill: `.claude/skills/wayflyer-morning-brief-refresh/`
+- Routine `trig_01ProAHLxYUyy26bKp5kxXE8`, 01:27 UTC (06:57 IST) daily,
+  **created disabled**: Routines made from this session cannot carry MCP
+  connectors, so a fired session would have no Stripe, Supabase, Kit or
+  PostHog access. Attach connectors in the claude.ai Routines UI, then enable.
