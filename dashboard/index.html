@@ -1,0 +1,534 @@
+<title>Wayflyer Morning Brief</title>
+<style>
+:root{
+  --bg:#0c0d0d; --panel:#191a1a; --panel2:#141515; --line:#313335;
+  --ink:#f9f9f9; --ink2:#caccce; --mute:#95999d;
+  --accent:#9ef; --accent2:#ceb8ff;
+  --good:#80e880; --bad:#fe7f8b; --neutral:#b0b3b5; --flat:#ceb8ff;
+  --track:#2e2e2e;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+}
+:root[data-theme="light"]{
+  --bg:#faf9f8; --panel:#fff; --panel2:#f2f2f3; --line:#e5e7eb;
+  --ink:#111827; --ink2:#1f2937; --mute:#62666a;
+  --accent:#0026fa; --accent2:#6d2bff;
+  --good:#39663d; --bad:#cf2048; --neutral:#62666a; --flat:#6d2bff;
+  --track:#e5e6e6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;
+  padding:0 0 44px}
+.stripe{height:3px;background:linear-gradient(90deg,#0026fa,#40f,#6d2bff,#9ef)}
+.wrap{max-width:1420px;margin:0 auto;padding:0 22px}
+
+header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px;
+  padding:22px 0 14px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.mark{font-size:23px;font-weight:900;letter-spacing:-.02em}
+.mark span{color:var(--mute);font-weight:700;letter-spacing:.09em;
+  font-size:13px;text-transform:uppercase;margin-left:11px}
+.hgrow{flex:1 1 auto}
+.stamp{font-family:var(--mono);font-size:13px;color:var(--mute);text-align:right}
+.stamp b{color:var(--ink2);font-weight:700}
+.tabs{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.tabs button{font:700 13px/1 var(--sans);padding:8px 14px;background:transparent;
+  color:var(--mute);border:0;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--panel);color:var(--ink)}
+
+.sec{display:flex;align-items:center;gap:12px;margin:26px 0 11px}
+.sec:first-of-type{margin-top:0}
+.sec h2{font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;
+  white-space:nowrap}
+.sub{font-size:13px;color:var(--mute);font-weight:400;text-transform:none;
+  letter-spacing:0}
+.sec .bar{flex:1 1 auto;height:1px;background:var(--line)}
+.secsplit{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:26px 0 11px}
+.secsplit>div{display:flex;align-items:center;gap:12px}
+
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c6{grid-column:span 6}.c8{grid-column:span 8}
+@media(max-width:1080px){.c3{grid-column:span 6}.c4{grid-column:span 6}
+  .c6,.c8{grid-column:span 12}.secsplit{grid-template-columns:1fr}}
+@media(max-width:640px){.c3,.c4,.c6,.c8{grid-column:span 12}}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:15px 16px 14px;display:flex;flex-direction:column;min-height:158px}
+.card.tall{min-height:212px}
+.t{font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:.045em;
+  color:var(--ink2);display:flex;align-items:baseline;gap:7px}
+.t .win{font-weight:700;font-size:13px;color:var(--mute);letter-spacing:.03em}
+.info{font-family:var(--mono);font-size:13px;color:var(--mute);cursor:help;
+  border-bottom:1px dotted var(--mute)}
+.v{font-family:var(--mono);font-weight:700;font-size:30px;letter-spacing:-.02em;
+  margin-top:9px;line-height:1.05}
+.v.hero{font-size:56px;margin-top:6px}
+.d{font-family:var(--mono);font-size:15px;font-weight:700;margin-top:6px}
+.n{font-size:13px;color:var(--mute);margin-top:auto;padding-top:10px}
+.n.strong{color:var(--ink2)}
+.up{color:var(--good)}.dn{color:var(--bad)}.nu{color:var(--neutral)}.fl{color:var(--flat)}
+.row2{display:flex;gap:22px;align-items:baseline;flex-wrap:wrap}
+.kv{font-family:var(--mono);font-size:13px;color:var(--mute)}
+.kv b{font-size:19px;color:var(--ink);font-weight:700;display:block}
+
+.prog{margin-top:13px}
+.track{height:11px;background:var(--track);border-radius:6px;overflow:hidden}
+.fill{height:100%;background:var(--accent);border-radius:6px}
+.plab{display:flex;justify-content:space-between;font-family:var(--mono);
+  font-size:13px;color:var(--mute);margin-top:6px}
+
+table.bars{width:100%;border-collapse:collapse;margin-top:11px}
+table.bars td{padding-top:4px;padding-bottom:4px;font-size:13px;vertical-align:middle}
+td.lb{font-family:var(--mono);color:var(--ink2);white-space:nowrap;
+  padding-right:11px;width:1%}
+td.bw{width:99%}
+td.vl{font-family:var(--mono);font-weight:700;color:var(--ink);text-align:right;
+  white-space:nowrap;padding-left:11px;padding-right:15px;width:1%;font-size:13px}
+.bo{height:13px;background:var(--track);border-radius:3px;overflow:hidden}
+.bi{height:100%;background:var(--accent);border-radius:3px}
+.bi.alt{background:var(--accent2)}
+table.bars.big td{padding-top:11px;padding-bottom:11px}
+table.bars.big .bo{height:16px}
+td.nn{font-family:var(--mono);color:var(--mute);text-align:right;padding-left:0;
+  width:1%;font-size:13px;white-space:nowrap}
+
+.nt{background:repeating-linear-gradient(135deg,var(--panel2),var(--panel2) 9px,
+  transparent 9px,transparent 18px);border-style:dashed}
+.nt .t{color:var(--mute)}
+.ntb{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--mute);
+  border:1px dashed var(--line);border-radius:5px;padding:5px 8px;
+  display:inline-block;margin-top:11px}
+
+footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);
+  font-size:13px;color:var(--mute)}
+footer b{color:var(--ink2)}
+.warn{color:var(--flat);font-weight:700}
+svg{display:block;width:100%;height:auto}
+.sparkbox svg{height:54px}
+.colbox svg{height:44px}
+</style>
+
+<div class="stripe"></div>
+<div class="wrap">
+  <header>
+    <div class="mark">Wayflyer<span>Morning brief</span></div>
+    <div class="hgrow"></div>
+    <div class="tabs" role="group" aria-label="Theme">
+      <button id="bd" aria-pressed="true">Dark</button>
+      <button id="bl" aria-pressed="false">Light</button>
+    </div>
+    <div class="stamp" id="stamp"></div>
+  </header>
+  <main id="app"></main>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* ============================================================
+   D: every figure the page shows. Nothing is hardcoded below.
+   Pulled 2026-08-20 00:55 IST (2026-08-19 19:25 UTC), read only.
+   ============================================================ */
+const D = {
+  meta:{
+    date:"Thu 20 Aug 2026", tz:"IST",
+    note:"All windows computed in Asia/Kolkata. Every count states its population.",
+    fresh:[
+      {k:"Stripe",   v:"live"},
+      {k:"mirror",   v:"03:47Z"},
+      {k:"Kit",      v:"19 Aug"},
+      {k:"PostHog",  v:"live"},
+      {k:"YouTube",  v:"not connected"}
+    ]
+  },
+
+  mrr:{
+    value:64890.25, target:100000, subs:666, emails:666, arpu:97.43,
+    pop:"666 community subscriptions, status active or past due",
+    tip:"Community product only (prod_RXDHmdMsfARKqe). Monthly normalised: yearly divided by 12, the quarterly plan divided by its interval count of 3. Prices are USD denominated in Stripe, so no currency conversion is applied. Past due subscriptions stay in until the member actually cancels, per your definition. Discounts are not mirrored, so this is list price net of nothing: see the footer.",
+    series:[
+      {d:"28 Feb", v:36322.58},{d:"31 Mar", v:46697.25},{d:"30 Apr", v:57776.00},
+      {d:"31 May", v:59978.67},{d:"30 Jun", v:61417.58},{d:"31 Jul", v:63692.83},
+      {d:"20 Aug", v:64987.25, partial:true}
+    ],
+    seriesTip:"Month end MRR on a not yet ended basis. The mirror stores only current status, so past paused or past due states cannot be reconstructed. That basis reads 64,987 today against the 64,890 headline: the 97 gap is one paused subscription."
+  },
+
+  net:{
+    value:1294.42, prev:63692.83, band:2000,
+    adds:[
+      {d:"Mar", v:10374.67},{d:"Apr", v:11078.75},{d:"May", v:2202.67},
+      {d:"Jun", v:1438.91},{d:"Jul", v:2275.25},{d:"Aug", v:1294.42, partial:true}
+    ],
+    addsTip:"Net MRR added each month, derived from the month end series. April added 11,079. The last three full months added 2,203, 1,439 and 2,275. That deceleration is the story the headline number alone does not tell.",
+    tip:"Month to date against the close of last month, same basis as the sparkline. Your flat test is plus or minus 2,000."
+  },
+
+  newmem:{
+    v30:73, vprior:172, buyersPH:77,
+    confounded:"Prior 30 days contained a launch spike of 67 and 44 in the first two July weeks. The comparison is not like for like, so it renders neutral.",
+    tip:"New community subscriptions started in the window, from the mirror. PostHog independently counts 77 distinct purchasers over the same 30 days, within 5 percent, which corroborates it.",
+    weeks:[
+      {d:"29 Jun", v:44},{d:"6 Jul", v:67},{d:"13 Jul", v:18},{d:"20 Jul", v:19},
+      {d:"27 Jul", v:15},{d:"3 Aug", v:18},{d:"10 Aug", v:20},{d:"17 Aug", v:3, partial:true}
+    ]
+  },
+
+  yt:{
+    buyers:46, total:77, visitors120:28862, untagged:24,
+    tip:"Purchasers in the last 30 days who had an earlier campaign page view carrying utm_source=youtube, joined on person. The purchase events themselves carry no utm_source, so the tag is read from the page view. 24 of the 77 purchasers carry no tag at all, so 60 percent is a floor on YouTube's contribution, not a ceiling."
+  },
+
+  churn:{
+    rate:12.39, target:10.0, prevRate:24.37,
+    open0:678, new:73, gone:84, openNow:667,
+    censored:true,
+    tip:"Departures counted when the subscription actually ended (status canceled), over subscriptions open at the start of the window. Both sides are the same population: community subscriptions excluding incomplete_expired, which are failed checkouts and not churn.",
+    reconTip:"Flow reconciliation, community subscriptions not yet ended: 678 open at start plus 73 new minus 84 departed equals 667 open today. Closes exactly.",
+    censorTip:"This window is incomplete. 79 subscriptions have a cancellation requested but have not reached their period end, so they are not yet counted as departures. The rate will rise as they land. That is also why the fall from 24.4 percent renders neutral rather than good."
+  },
+
+  pending:{
+    subs:79, mrr:7746.42, gone7d:8, shareOfMrr:11.9,
+    tip:"Subscriptions with a cancellation requested that have not yet ended. Stripe stamps canceled_at when the member asks; they keep paying until the period closes. These are the people still reachable. Population is subscriptions not yet ended, which is 79; 78 of them are active or past due."
+  },
+
+  tenure:{
+    tip:"Rate per band, not a share of cancellations: departures whose tenure fell in the band, over every subscription that reached the start of that band. Lifetime, all cohorts.",
+    caveat:"The 6 month plus band is open ended, so its rate is not comparable with the fixed width bands above it.",
+    bands:[
+      {l:"0 to 1 mo",  ended:1118, reached:3451},
+      {l:"1 to 3 mo",  ended:1018, reached:2254},
+      {l:"3 to 6 mo",  ended:401,  reached:1036},
+      {l:"6 mo +",     ended:247,  reached:414, open:true}
+    ]
+  },
+
+  mix:{
+    total:666, arpu:97.43,
+    tip:"Live community subscriptions by the price they are actually on. Sums to the 666 on the MRR card.",
+    rows:[
+      {l:"$97 / mo",    n:383},{l:"$127 / mo",  n:133},{l:"$797 / yr",  n:90},
+      {l:"$997 / yr",   n:38}, {l:"$597 / yr",  n:11}, {l:"$147 / mo",  n:4},
+      {l:"$1,048 / yr", n:4},  {l:"$229 / 3 mo",n:3}
+    ]
+  },
+
+  failed:{
+    customers:24, amount:3439.89, attempts:53, retried:14, maxAttempts:5,
+    tip:"Distinct customers with a failed charge in the last 7 days, from live Stripe. The amount is the latest failed attempt per customer. Summing all 53 attempts would report 6,330 and overstate what is recoverable by 84 percent, because dunning retries the same card up to 5 times."
+  },
+
+  dupes:{
+    count:0, scanned:132, customers:131, gross:12513.89,
+    tip:"Succeeded charges in the last 7 days grouped by customer and amount, looking for the same customer charged the same amount twice. All 132 charges across 131 customers were checked and no group had more than one. A verified zero, not a gap."
+  },
+
+  email:{
+    subs:33311, net:-1167, gained:2831, lost:3998,
+    tip:"Kit get_growth_stats. The subscriber figure is a point in time snapshot that excludes inactive, bounced and complained addresses. Kit exposes three different subscriber counts that do not agree with each other; this page stays on this one so the number does not move for no reason."
+  },
+
+  upload:{
+    tracked:false,
+    reason:"YouTube is not connected.",
+    detail:"Needs one OAuth approval through Composio. No number is shown and no upload dates are inferred from anywhere else."
+  },
+
+  caveats:[
+    "Stripe's own reporting API is blocked by a missing reporting_write scope on the key, so MRR and churn here are computed from subscription records and cannot be cross checked against Stripe's own figures.",
+    "Discounts are not present in the mirror (discount_percent is null on every row), so MRR is not yet net of discounts. Reading them needs a live Stripe pull per subscription.",
+    "6 active subscriptions are priced in BRL, worth R$2,941.75 per month. They sit outside this page's community scope and carry no converted figure, because a converted number needs a sourced and dated rate."
+  ]
+};
+
+/* ============================================================
+   Render. Direction is declared per metric, never taken from
+   the sign of the change.
+   ============================================================ */
+const $ = s => document.createElement(s);
+const money = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0});
+const money2 = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const num = n => n.toLocaleString("en-US");
+const pct = (n,d=1) => n.toFixed(d) + "%";
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+
+document.getElementById("stamp").innerHTML =
+  "<b>" + esc(D.meta.date) + " · " + esc(D.meta.tz) + "</b><br>fresh " +
+  D.meta.fresh.map(f => esc(f.k) + " " + esc(f.v)).join("  ·  ");
+
+function sec(title, sub){
+  const w = $("div"); w.className = "sec";
+  w.innerHTML = "<h2>" + esc(title) + (sub ? " <span class='sub'>" + esc(sub) + "</span>" : "") +
+                "</h2><div class='bar'></div>";
+  return w;
+}
+function splitSec(a, asub, b, bsub){
+  const w = $("div"); w.className = "secsplit";
+  w.innerHTML =
+    "<div><h2>" + esc(a) + " <span class='sub'>" + esc(asub) + "</span></h2><div class='bar'></div></div>" +
+    "<div><h2>" + esc(b) + " <span class='sub'>" + esc(bsub) + "</span></h2><div class='bar'></div></div>";
+  return w;
+}
+function grid(){ const g = $("div"); g.className = "grid"; return g; }
+function card(span, extra){
+  const c = $("div"); c.className = "card " + span + (extra ? " " + extra : ""); return c;
+}
+function title(c, text, win, tip){
+  const t = $("div"); t.className = "t";
+  t.innerHTML = esc(text) + (win ? " <span class='win'>" + esc(win) + "</span>" : "") +
+    (tip ? " <span class='info' title=\"" + esc(tip) + "\">i</span>" : "");
+  c.appendChild(t);
+}
+function note(c, html, strong){
+  const n = $("div"); n.className = "n" + (strong ? " strong" : ""); n.innerHTML = html;
+  c.appendChild(n);
+}
+
+/* sparkline / column series ------------------------------------ */
+function spark(pts, h){
+  h = h || 46;
+  const W = 300, vals = pts.map(p => p.v), lo = Math.min(...vals), hi = Math.max(...vals);
+  const rng = (hi - lo) || 1;
+  const x = i => (i / (pts.length - 1)) * W;
+  const y = v => h - 4 - ((v - lo) / rng) * (h - 10);
+  const line = pts.map((p,i) => x(i).toFixed(1) + "," + y(p.v).toFixed(1)).join(" ");
+  const area = "0," + h + " " + line + " " + W + "," + h;
+  const last = pts[pts.length - 1];
+  return "<svg viewBox='0 0 " + W + " " + (h + 16) + "' preserveAspectRatio='none' aria-hidden='true'>" +
+    "<polygon points='" + area + "' fill='var(--accent)' opacity='.14'/>" +
+    "<polyline points='" + line + "' fill='none' stroke='var(--accent)' stroke-width='2' " +
+      "stroke-linejoin='round' vector-effect='non-scaling-stroke'/>" +
+    "<circle cx='" + x(pts.length-1).toFixed(1) + "' cy='" + y(last.v).toFixed(1) +
+      "' r='3' fill='var(--accent)'/>" +
+    "</svg>";
+}
+function sparkAxis(pts){
+  const a = pts[0].d, b = pts[pts.length-1].d, part = pts[pts.length-1].partial;
+  return "<div class='plab'><span>" + esc(a) + "</span><span>" + esc(b) +
+         (part ? " (partial)" : "") + "</span></div>";
+}
+function cols(pts){
+  const W = 300, h = 46, vals = pts.map(p=>p.v), hi = Math.max(...vals) || 1;
+  const bw = W / pts.length;
+  let s = "<svg viewBox='0 0 " + W + " " + h + "' preserveAspectRatio='none' aria-hidden='true'>";
+  pts.forEach((p,i) => {
+    const bh = Math.max(2, (p.v / hi) * (h - 6));
+    s += "<rect x='" + (i*bw + bw*0.16).toFixed(1) + "' y='" + (h - bh).toFixed(1) +
+         "' width='" + (bw*0.68).toFixed(1) + "' height='" + bh.toFixed(1) +
+         "' fill='" + (p.partial ? "var(--mute)" : "var(--accent)") +
+         "' opacity='" + (p.partial ? ".45" : "1") + "' rx='1'/>";
+  });
+  return s + "</svg>";
+}
+function barTable(rows, maxKey, fmt, altIdx){
+  const hi = Math.max(...rows.map(r => r[maxKey])) || 1;
+  let s = "<table class='bars'>";
+  rows.forEach((r,i) => {
+    const w = (r[maxKey] / hi) * 100;
+    s += "<tr><td class='lb'>" + esc(r.l) + "</td>" +
+         "<td class='bw'><div class='bo'><div class='bi" + (altIdx===i ? " alt" : "") +
+           "' style='width:" + w.toFixed(1) + "%'></div></div></td>" +
+         "<td class='vl'>" + fmt(r) + "</td>" +
+         (r.n2 !== undefined ? "<td class='nn'>" + esc(r.n2) + "</td>" : "") +
+         "</tr>";
+  });
+  return s + "</table>";
+}
+
+const app = document.getElementById("app");
+
+/* ---------- REVENUE ---------- */
+app.appendChild(sec("Revenue"));
+{
+  const g = grid();
+
+  const c = card("c8","tall");
+  title(c, "Community MRR", "USD · month to date", D.mrr.tip);
+  const v = $("div"); v.className = "v hero"; v.textContent = money(D.mrr.value); c.appendChild(v);
+  const p = $("div"); p.className = "prog";
+  const share = (D.mrr.value / D.mrr.target) * 100;
+  p.innerHTML = "<div class='track'><div class='fill' style='width:" + share.toFixed(1) + "%'></div></div>" +
+    "<div class='plab'><span>" + pct(share) + " of " + money(D.mrr.target) + " target</span>" +
+    "<span>" + num(D.mrr.subs) + " subscriptions · ARPU " + money2(D.mrr.arpu) + "</span></div>";
+  c.appendChild(p);
+  const sp = $("div"); sp.className = "sparkbox"; sp.style.marginTop = "13px";
+  sp.innerHTML = "<div class='t' style='font-size:13px;letter-spacing:.03em'>7 month trend " +
+    "<span class='info' title=\"" + esc(D.mrr.seriesTip) + "\">i</span></div>" +
+    spark(D.mrr.series, 42) + sparkAxis(D.mrr.series);
+  c.appendChild(sp);
+  note(c, D.mrr.pop);
+  g.appendChild(c);
+
+  const n = card("c4","tall");
+  const flat = Math.abs(D.net.value) <= D.net.band;
+  title(n, "Net this month", "vs last month close", D.net.tip);
+  const nv = $("div"); nv.className = "v " + (flat ? "fl" : (D.net.value > 0 ? "up" : "dn"));
+  nv.textContent = (D.net.value > 0 ? "+" : "") + money2(D.net.value); n.appendChild(nv);
+  const nd = $("div"); nd.className = "d " + (flat ? "fl" : "nu");
+  nd.textContent = flat ? "FLAT · inside ±" + money(D.net.band) : "moving";
+  n.appendChild(nd);
+  const nb = $("div"); nb.className = "colbox"; nb.style.marginTop = "13px";
+  nb.innerHTML = "<div class='t' style='font-size:13px;letter-spacing:.03em'>Net added per month " +
+    "<span class='info' title=\"" + esc(D.net.addsTip) + "\">i</span></div>" +
+    cols(D.net.adds) +
+    "<div class='plab'><span>" + esc(D.net.adds[0].d) + "</span><span>" +
+    esc(D.net.adds[D.net.adds.length-1].d) + " (partial)</span></div>";
+  n.appendChild(nb);
+  note(n, flat
+    ? "<span class='warn'>The month where the machine is spinning.</span> Monthly adds have fallen from 11,079 in April."
+    : "Outside your flat band.", true);
+  g.appendChild(n);
+
+  app.appendChild(g);
+}
+
+/* ---------- ACQUISITION | RETENTION ---------- */
+app.appendChild(splitSec("Acquisition","coming in","Retention","going out"));
+{
+  const g = grid();
+
+  const a = card("c3");
+  title(a, "New members", "30 days", D.newmem.tip);
+  const av = $("div"); av.className = "v"; av.textContent = num(D.newmem.v30); a.appendChild(av);
+  const ad = $("div"); ad.className = "d nu";
+  ad.textContent = "prior 30d " + num(D.newmem.vprior) + " · not comparable";
+  a.appendChild(ad);
+  const aw = $("div"); aw.className = "colbox"; aw.style.marginTop = "9px";
+  aw.innerHTML = cols(D.newmem.weeks) +
+    "<div class='plab'><span>" + esc(D.newmem.weeks[0].d) + "</span><span>" +
+    esc(D.newmem.weeks[D.newmem.weeks.length-1].d) + " (partial)</span></div>";
+  a.appendChild(aw);
+  note(a, "8 weekly cohorts. <span class='info' title=\"" + esc(D.newmem.confounded) +
+        "\">why neutral</span>");
+  g.appendChild(a);
+
+  const y = card("c3");
+  title(y, "Of which YouTube", "30 days", D.yt.tip);
+  const ys = (D.yt.buyers / D.yt.total) * 100;
+  const yv = $("div"); yv.className = "v"; yv.textContent = num(D.yt.buyers); y.appendChild(yv);
+  const yd = $("div"); yd.className = "d nu";
+  yd.textContent = "at least " + pct(ys,0) + " of " + D.yt.total + " buyers";
+  y.appendChild(yd);
+  note(y, num(D.yt.untagged) + " buyers carry no source tag at all, so this is a floor. " +
+          num(D.yt.visitors120) + " tagged YouTube arrivals in 120 days.");
+  g.appendChild(y);
+
+  const ch = card("c3");
+  title(ch, "Churn", "30 days · at period end", D.churn.tip);
+  const cv = $("div"); cv.className = "v " + (D.churn.rate > D.churn.target ? "dn" : "up");
+  cv.textContent = pct(D.churn.rate,2); ch.appendChild(cv);
+  const cr = $("div"); cr.className = "row2"; cr.style.marginTop = "10px";
+  cr.innerHTML = "<span class='kv'><b>" + pct(D.churn.target) + "</b>target</span>" +
+    "<span class='kv'><b>" + pct(D.churn.prevRate,1) + "</b>prior 30d</span>" +
+    "<span class='kv'><b>" + D.pending.subs + "</b>not yet landed</span>";
+  ch.appendChild(cr);
+  const cd = $("div"); cd.className = "d nu"; cd.style.marginTop = "9px";
+  cd.innerHTML = "<span class='info' title=\"" + esc(D.churn.censorTip) +
+    "\">window incomplete, will rise</span>";
+  ch.appendChild(cd);
+  note(ch, "<span class='info' title=\"" + esc(D.churn.reconTip) + "\">" +
+    D.churn.open0 + " + " + D.churn.new + " − " + D.churn.gone + " = " + D.churn.openNow +
+    " ✓</span> flow closes");
+  g.appendChild(ch);
+
+  const pg = card("c3");
+  title(pg, "Leaving now", "reachable", D.pending.tip);
+  const pv = $("div"); pv.className = "v dn"; pv.textContent = num(D.pending.subs); pg.appendChild(pv);
+  const pr = $("div"); pr.className = "row2"; pr.style.marginTop = "8px";
+  pr.innerHTML = "<span class='kv'><b>" + money(D.pending.mrr) + "</b>MRR at risk</span>" +
+                 "<span class='kv'><b>" + D.pending.gone7d + "</b>ended in 7d</span>";
+  pg.appendChild(pr);
+  note(pg, "Cancellation requested, period not yet closed. That is " +
+    pct(D.pending.shareOfMrr) + " of MRR still winnable.", true);
+  g.appendChild(pg);
+
+  app.appendChild(g);
+}
+
+/* ---------- RETENTION DETAIL ---------- */
+app.appendChild(sec("Retention detail","where in the life they leave"));
+{
+  const g = grid();
+
+  const t = card("c6","tall");
+  title(t, "Churn by tenure", "rate per band · lifetime", D.tenure.tip);
+  const rows = D.tenure.bands.map(b => ({
+    l:b.l, r:(b.ended / b.reached) * 100, n2:"n=" + num(b.reached)
+  }));
+  const holder = $("div");
+  holder.innerHTML = barTable(rows, "r", r => pct(r.r,1), 3).replace("class='bars'","class='bars big'");
+  t.appendChild(holder);
+  note(t, "First band is an onboarding problem, last band is a delivery problem. " +
+    "<span class='info' title=\"" + esc(D.tenure.caveat) + "\">band widths differ</span>");
+  g.appendChild(t);
+
+  const m = card("c6","tall");
+  title(m, "Price breakdown", num(D.mix.total) + " live", D.mix.tip);
+  const mh = $("div");
+  mh.innerHTML = barTable(D.mix.rows, "n", r => num(r.n));
+  m.appendChild(mh);
+  note(m, "ARPU " + money2(D.mix.arpu) + " across all tiers.");
+  g.appendChild(m);
+
+  app.appendChild(g);
+}
+
+/* ---------- SAME DAY MONEY | AUDIENCE ---------- */
+app.appendChild(splitSec("Same day money","fix this morning","Audience","reach"));
+{
+  const g = grid();
+
+  const f = card("c3");
+  title(f, "Failed payments", "7 days", D.failed.tip);
+  const fv = $("div"); fv.className = "v dn"; fv.textContent = num(D.failed.customers); f.appendChild(fv);
+  const fd = $("div"); fd.className = "d dn"; fd.textContent = money2(D.failed.amount) + " outstanding";
+  f.appendChild(fd);
+  note(f, "customers, not attempts. " + D.failed.attempts + " attempts, " +
+    D.failed.retried + " retried, one card tried " + D.failed.maxAttempts + " times.", true);
+  g.appendChild(f);
+
+  const dp = card("c3");
+  title(dp, "Duplicate charges", "7 days", D.dupes.tip);
+  const dv = $("div"); dv.className = "v up"; dv.textContent = num(D.dupes.count); dp.appendChild(dv);
+  const dd = $("div"); dd.className = "d nu";
+  dd.textContent = num(D.dupes.scanned) + " charges checked";
+  dp.appendChild(dd);
+  note(dp, "Verified zero across " + num(D.dupes.customers) + " customers and " +
+    money(D.dupes.gross) + " of successful charges.");
+  g.appendChild(dp);
+
+  const e = card("c3");
+  title(e, "Email list", "Kit · 30 days", D.email.tip);
+  const ev = $("div"); ev.className = "v"; ev.textContent = num(D.email.subs); e.appendChild(ev);
+  const ed = $("div"); ed.className = "d dn"; ed.textContent = num(D.email.net) + " net";
+  e.appendChild(ed);
+  note(e, "<span class='kv'>" + num(D.email.gained) + " in · " + num(D.email.lost) +
+    " out</span><br>The list is shrinking.", true);
+  g.appendChild(e);
+
+  const u = card("c3","nt");
+  title(u, "Upload cadence", "target 2 / week");
+  const ub = $("div"); ub.className = "ntb"; ub.textContent = "NOT TRACKED"; u.appendChild(ub);
+  note(u, "<b>" + esc(D.upload.reason) + "</b><br>" + esc(D.upload.detail), true);
+  g.appendChild(u);
+
+  app.appendChild(g);
+}
+
+/* ---------- footer ---------- */
+document.getElementById("foot").innerHTML =
+  "<b>Known limits, so nothing here gets over read.</b><br>" +
+  D.caveats.map(c => "· " + esc(c)).join("<br>") +
+  "<br><br>" + esc(D.meta.note);
+
+/* ---------- theme ---------- */
+const bd = document.getElementById("bd"), bl = document.getElementById("bl");
+function theme(mode){
+  document.documentElement.setAttribute("data-theme", mode);
+  bd.setAttribute("aria-pressed", mode === "dark");
+  bl.setAttribute("aria-pressed", mode === "light");
+}
+bd.onclick = () => theme("dark");
+bl.onclick = () => theme("light");
+theme("dark");
+</script>
