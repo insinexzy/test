@@ -102,7 +102,7 @@ They are **not** churn. Including them roughly doubles any churn rate.
 
 ### The cancellation-request trap
 
-**84 rows are `status = active` with `canceled_at` already stamped.** Stripe stamps
+**84 rows across all products (79 in the community, of which 78 are active or past due) are not yet ended but carry a `canceled_at` stamp.** Stripe stamps
 `canceled_at` when cancellation is *requested*; the subscription stays active and
 paying until the period ends. So:
 
@@ -115,9 +115,27 @@ Population breakdown today: 676 active with no cancellation request, 11 past_due
 
 ### Flow reconciliation (30 days, `incomplete_expired` excluded)
 
+Two different lines both close, and they answer different questions. Say which
+one you mean, because they differ by more than a factor of one and a half on the
+churn rate.
+
+**All recurring products, departures counted at cancellation request:**
+
 ```
-active at start 768 + new 77 - churned 155 = 690   open today 690   ✓ closes exactly
+768 + 77 - 155 = 690   open today 690   ✓
 ```
+
+**Community product only, departures counted when the period actually ended.**
+This is the one the dashboard uses, because the owner chose period end:
+
+```
+678 + 73 - 84 = 667    open today 667   ✓
+```
+
+The 155 in the first line counts requests, so it includes the 79 members who have
+asked to leave but are still paying. The 84 in the second counts only
+subscriptions that have genuinely ended. Reading one as the other moves churn
+from 12.4% to 20.2%.
 
 ---
 
